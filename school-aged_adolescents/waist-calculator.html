@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waist Percentile Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        .result-pop {
+            animation: pop 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+        
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Calculadora de Riesgo por Circunferencia de Cintura</h1>
+            <p class="text-gray-500 mt-1">Ingrese los datos del estudiante para evaluar.</p>
+        </div>
+
+        <!-- Data input form -->
+        <form id="percentileForm" class="space-y-6">
+            <div>
+                <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Edad (2-18 años)</label>
+                <input type="number" id="age" name="age" min="2" max="18" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
+                <div class="flex gap-4">
+                    <label for="sex-girl" class="flex items-center p-3 border border-gray-300 rounded-lg flex-1 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition">
+                        <input type="radio" id="sex-girl" name="sex" value="female" required class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                        <span class="ml-3 text-sm font-medium text-gray-800">Femenino</span>
+                    </label>
+                    <label for="sex-boy" class="flex items-center p-3 border border-gray-300 rounded-lg flex-1 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition">
+                        <input type="radio" id="sex-boy" name="sex" value="male" required class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                        <span class="ml-3 text-sm font-medium text-gray-800">Masculino</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label for="measurement" class="block text-sm font-medium text-gray-700 mb-1">Medición de Cintura (cm)</label>
+                <input type="number" id="measurement" name="measurement" step="0.1" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 shadow-md">
+                Calcular
+            </button>
+        </form>
+
+        <!-- Result area -->
+        <div id="result-container" class="mt-8 text-center hidden">
+             <h2 id="diagnostic-text" class="text-3xl font-bold mb-2"></h2>
+             <div id="result-value" class="text-7xl font-bold my-2"></div>
+             <p id="result-text" class="text-gray-500 text-sm"></p>
+        </div>
+
+    </div>
+
+    <script>
+        // --- INTERNAL DATABASE ---
+        const percentile_data = {
+            female: {
+                2:  { p10: 43.8, p25: 45.0, p50: 47.1, p75: 49.5, p90: 52.2 },
+                3:  { p10: 45.4, p25: 46.7, p50: 49.1, p75: 51.9, p90: 55.3 },
+                4:  { p10: 46.9, p25: 48.4, p50: 51.1, p75: 54.3, p90: 58.3 },
+                5:  { p10: 48.5, p25: 50.1, p50: 53.0, p75: 56.7, p90: 61.4 },
+                6:  { p10: 50.1, p25: 51.8, p50: 55.0, p75: 59.1, p90: 64.4 },
+                7:  { p10: 51.6, p25: 53.5, p50: 56.9, p75: 61.5, p90: 67.5 },
+                8:  { p10: 53.2, p25: 55.2, p50: 58.9, p75: 63.9, p90: 70.5 },
+                9:  { p10: 54.8, p25: 56.9, p50: 60.8, p75: 66.3, p90: 73.6 },
+                10: { p10: 56.3, p25: 58.6, p50: 62.8, p75: 68.7, p90: 76.6 },
+                11: { p10: 57.9, p25: 60.3, p50: 64.8, p75: 71.1, p90: 79.7 },
+                12: { p10: 59.5, p25: 62.0, p50: 66.7, p75: 73.5, p90: 82.7 },
+                13: { p10: 61.0, p25: 63.7, p50: 68.7, p75: 75.9, p90: 85.8 },
+                14: { p10: 62.6, p25: 65.4, p50: 70.6, p75: 78.3, p90: 88.8 },
+                15: { p10: 64.2, p25: 67.1, p50: 72.6, p75: 80.7, p90: 91.9 },
+                16: { p10: 65.7, p25: 68.8, p50: 74.6, p75: 83.1, p90: 94.9 },
+                17: { p10: 67.3, p25: 70.5, p50: 76.5, p75: 85.5, p90: 98.0 },
+                18: { p10: 69.9, p25: 72.2, p50: 78.5, p75: 87.9, p90: 101.0 }
+            },
+            male: {
+                2:  { p10: 43.2, p25: 45.0, p50: 47.1, p75: 48.8, p90: 50.8 },
+                3:  { p10: 44.9, p25: 46.9, p50: 49.1, p75: 51.3, p90: 54.2 },
+                4:  { p10: 46.6, p25: 48.7, p50: 51.1, p75: 53.9, p90: 57.6 },
+                5:  { p10: 48.4, p25: 50.6, p50: 53.2, p75: 56.4, p90: 61.0 },
+                6:  { p10: 50.1, p25: 52.4, p50: 55.2, p75: 59.0, p90: 64.4 },
+                7:  { p10: 51.8, p25: 54.3, p50: 57.2, p75: 61.5, p90: 67.8 },
+                8:  { p10: 53.5, p25: 56.1, p50: 59.3, p75: 64.1, p90: 71.2 },
+                9:  { p10: 55.3, p25: 58.0, p50: 61.3, p75: 66.6, p90: 74.6 },
+                10: { p10: 57.0, p25: 59.8, p50: 63.3, p75: 69.2, p90: 78.0 },
+                11: { p10: 58.7, p25: 61.7, p50: 65.4, p75: 71.7, p90: 81.4 },
+                12: { p10: 60.5, p25: 63.5, p50: 67.4, p75: 74.3, p90: 84.8 },
+                13: { p10: 62.2, p25: 65.4, p50: 69.5, p75: 76.8, p90: 88.2 },
+                14: { p10: 63.9, p25: 67.2, p50: 71.5, p75: 79.4, p90: 91.6 },
+                15: { p10: 65.6, p25: 69.1, p50: 73.5, p75: 81.9, p90: 95.0 },
+                16: { p10: 67.4, p25: 70.9, p50: 75.6, p75: 84.5, p90: 98.4 },
+                17: { p10: 69.1, p25: 72.8, p50: 77.6, p75: 87.0, p90: 101.8 },
+                18: { p10: 70.8, p25: 74.6, p50: 79.6, p75: 89.6, p90: 105.2 }
+            }
+        };
+
+        // --- DOM REFERENCES ---
+        const form = document.getElementById('percentileForm');
+        const resultContainer = document.getElementById('result-container');
+        const resultValue = document.getElementById('result-value');
+        const diagnosticTextEl = document.getElementById('diagnostic-text');
+        const resultText = document.getElementById('result-text');
+
+        // --- CALCULATION LOGIC ---
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const age = parseInt(document.getElementById('age').value);
+            const sexKey = document.querySelector('input[name="sex"]:checked')?.value;
+            const measurement = parseFloat(document.getElementById('measurement').value);
+
+            if (isNaN(age) || !sexKey || isNaN(measurement)) {
+                resultContainer.classList.remove('hidden');
+                diagnosticTextEl.textContent = 'Datos incompletos';
+                diagnosticTextEl.classList.remove('text-red-500', 'text-orange-500', 'text-green-600');
+                resultValue.textContent = '⚠️';
+                resultValue.classList.remove('text-red-500', 'text-orange-500', 'text-green-600');
+                resultText.innerHTML = 'Por favor, complete todos los campos correctamente.';
+                return;
+            }
+
+            const ageData = percentile_data[sexKey][age];
+            const p90_value = ageData.p90;
+            const p75_value = ageData.p75;
+            
+            let finalResult;
+            let diagnosticText;
+            let resultMessage;
+            let resultColorClass;
+
+            finalResult = (measurement > p90_value) ? 1 : 0;
+
+            if (measurement > p90_value) {
+                diagnosticText = "Obesidad Abdominal";
+                resultColorClass = 'text-red-500';
+                resultMessage = `La medición (${measurement} cm) está sobre el percentil 90 (${p90_value} cm).`;
+            } else if (measurement > p75_value) {
+                diagnosticText = "Riesgo de Obesidad Abdominal";
+                resultColorClass = 'text-orange-500';
+                resultMessage = `La medición (${measurement} cm) está entre el P75 (${p75_value} cm) y el P90 (${p90_value} cm).`;
+            } else {
+                diagnosticText = "Normal";
+                resultColorClass = 'text-green-600';
+                resultMessage = `La medición (${measurement} cm) está en o por debajo del percentil 75 (${p75_value} cm).`;
+            }
+
+            resultValue.textContent = finalResult;
+            diagnosticTextEl.textContent = diagnosticText;
+            resultText.innerHTML = resultMessage;
+
+            const colorClasses = ['text-red-500', 'text-orange-500', 'text-green-600'];
+            resultValue.classList.remove(...colorClasses);
+            diagnosticTextEl.classList.remove(...colorClasses);
+            
+            resultValue.classList.add(resultColorClass);
+            diagnosticTextEl.classList.add(resultColorClass);
+            
+            resultContainer.classList.remove('hidden');
+            resultContainer.classList.add('result-pop');
+            
+            resultContainer.addEventListener('animationend', () => {
+                resultContainer.classList.remove('result-pop');
+            }, { once: true });
+        });
+    </script>
+</body>
+</html>
