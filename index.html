@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramientas de Evaluación Nutricional</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            padding: 60px 40px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .intro h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .intro p {
+            font-size: 1.1em;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .tool-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tool-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .tool-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tool-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .tool-features li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+        }
+
+        .tool-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .tool-button {
+            display: block;
+            width: 100%;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .tool-button:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #1f5f8b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .coming-soon {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px dashed #ced4da;
+            opacity: 0.7;
+        }
+
+        .coming-soon .tool-button {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .coming-soon .tool-button:hover {
+            background: #6c757d;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 40px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 40px 20px;
+            }
+
+            .header h1 {
+                font-size: 2.5em;
+            }
+
+            .main-content {
+                padding: 40px 20px;
+            }
+
+            .intro h2 {
+                font-size: 2em;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .tool-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Herramientas de Evaluación Nutricional</h1>
+            <p>Herramientas de evaluación basadas en evidencia para profesionales de la salud, investigadores y nutricionistas</p>
+        </header>
+
+        <main class="main-content">
+            <section class="intro">
+                <h2>Herramientas de Evaluación Disponibles</h2>
+                <p>Esta colección proporciona herramientas estandarizadas de evaluación nutricional basadas en investigación revisada por pares y directrices clínicas establecidas. Cada herramienta está diseñada para apoyar tanto la práctica clínica como las aplicaciones de investigación.</p>
+            </section>
+
+            <div class="tools-grid">
+                <!-- Herramienta de Evaluación de Circunferencia de Cintura -->
+                <div class="tool-card">
+                    <div class="tool-icon">🩺</div>
+                    <h3>Evaluación de Circunferencia de Cintura de Escolares y Adolescentes</h3>
+                    <div class="tool-description">
+                        Calcula percentiles de circunferencia de cintura para niños y adolescentes (edades 2-18 años) para evaluar patrones de crecimiento e identificar posibles riesgos cardiovasculares y metabólicos.
+                    </div>
+                    <ul class="tool-features">
+                        <li>Tablas de referencia específicas por edad y género</li>
+                        <li>Evaluación de riesgo basada en percentiles</li>
+                        <li>Calculadora interactiva con interpretación clínica</li>
+                        <li>Basado en muestras representativas nacionales</li>
+                    </ul>
+                    <a href="school-aged_adolescents/waist-calculator.html" class="tool-button">Abrir Calculadora</a>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p><strong>Repositorio de Herramientas de Evaluación Nutricional</strong></p>
+            <p>Herramientas basadas en evidencia para profesionales de la salud e investigadores</p>
+            <p>Visita nuestro <a href="https://github.com/fpereiracalvo/mvag-nutritional-evaluation" target="_blank">repositorio de GitHub</a> para documentación y actualizaciones</p>
+        </footer>
+    </div>
+</body>
+</html>
