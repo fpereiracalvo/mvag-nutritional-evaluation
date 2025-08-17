@@ -2,6 +2,10 @@
 
 A collection of evidence-based nutritional assessment tools designed for healthcare professionals, researchers, and nutritionists. This repository will grow to include various tools for comprehensive nutritional evaluation and health risk assessment across different populations.
 
+## 🔗 Live Tools
+
+Access the interactive tools directly at: **[https://fpereiracalvo.github.io/mvag-nutritional-evaluation/](https://fpereiracalvo.github.io/mvag-nutritional-evaluation/)**
+
 ## Overview
 
 This repository serves as a centralized hub for standardized nutritional assessment tools based on peer-reviewed research and established clinical guidelines. Each tool is designed to support both clinical practice and research applications in nutritional assessment.
@@ -56,7 +60,9 @@ These tools support healthcare professionals and researchers in:
 
 ## Getting Started
 
-Visit the individual tool directories for detailed documentation, reference tables, and usage instructions.
+**Quick Access**: Use the online tools directly at [https://fpereiracalvo.github.io/mvag-nutritional-evaluation/](https://fpereiracalvo.github.io/mvag-nutritional-evaluation/)
+
+For detailed documentation, reference tables, and usage instructions, visit the individual tool directories in this repository.
 
 ---
 
