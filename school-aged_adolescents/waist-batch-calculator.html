@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesador por Lotes de Perímetro Abdominal</title>
+    <!-- Tailwind CSS - For development only. In production, install as PostCSS plugin -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Shared Calculator Library -->
+    <script src="./waist-percentile-shared.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Procesador por Lotes de Perímetro Abdominal</h1>
+            <p class="text-gray-500 mt-2">Pega una lista de datos en formato CSV para evaluarlos con tablas completas de percentiles (P10, P25, P50, P75, P90).</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Columna de Entrada de Datos -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <h2 class="text-xl font-bold text-gray-700 mb-4">1. Ingresa los Datos (CSV)</h2>
+                <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-r-lg mb-4 text-sm">
+                    <p class="font-bold">Formato Requerido:</p>
+                    <p>Usa punto y coma <code class="bg-blue-100 p-1 rounded">;</code> como separador.</p>
+                    <p>La medición puede usar coma <code class="bg-blue-100 p-1 rounded">,</code> como decimal.</p>
+                    <p class="mt-2"><strong>Sexo:</strong> Usa "Masculino" o "1", "Femenino" o "2".</p>
+                    <p><strong>Ejemplo:</strong></p>
+                    <pre class="bg-blue-100 p-2 mt-1 rounded text-xs">6;65,5;1
+10;78,2;Femenino
+15;92;Masculino</pre>
+                </div>
+                <textarea id="data-input" rows="15" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition font-mono text-sm" placeholder="Pega tus datos aquí..."></textarea>
+                <button id="process-btn" class="mt-4 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 shadow-md">
+                    Procesar Datos
+                </button>
+            </div>
+
+            <!-- Columna de Resultados -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg flex flex-col">
+                <h2 class="text-xl font-bold text-gray-700 mb-4">2. Resultados (CSV)</h2>
+                 <textarea id="results-output" rows="15" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm flex-grow" placeholder="Los resultados en formato CSV aparecerán aquí..." readonly></textarea>
+                 <div class="grid grid-cols-2 gap-3 mt-4">
+                    <button id="copy-btn" class="w-full bg-gray-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300 shadow-md hidden">
+                        Copiar Resultados
+                    </button>
+                    <button id="download-btn" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 shadow-md hidden">
+                        Descargar CSV
+                    </button>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Use shared calculator library functions
+        const processBtn = document.getElementById('process-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const dataInput = document.getElementById('data-input');
+        const resultsOutput = document.getElementById('results-output');
+
+        processBtn.addEventListener('click', () => {
+            const inputData = dataInput.value.trim();
+            
+            // Process the batch data using shared library
+            const { results, errors } = window.WaistPercentileCalculator.processBatchData(inputData);
+            
+            // Generate CSV output with all percentiles
+            const csvOutput = window.WaistPercentileCalculator.generateCSVOutput(results, errors, true);
+            
+            resultsOutput.value = csvOutput;
+            
+            // Show/hide buttons based on results
+            if (results.length > 0 || errors.length > 0) {
+                copyBtn.classList.remove('hidden');
+                downloadBtn.classList.remove('hidden');
+            } else {
+                copyBtn.classList.add('hidden');
+                downloadBtn.classList.add('hidden');
+            }
+        });
+
+        copyBtn.addEventListener('click', () => {
+            resultsOutput.select();
+            document.execCommand('copy');
+
+            copyBtn.textContent = '¡Copiado!';
+            setTimeout(() => {
+                copyBtn.textContent = 'Copiar Resultados';
+            }, 2000);
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const csvContent = resultsOutput.value;
+            window.WaistPercentileCalculator.downloadCSV(csvContent);
+        });
+
+    </script>
+</body>
+</html>

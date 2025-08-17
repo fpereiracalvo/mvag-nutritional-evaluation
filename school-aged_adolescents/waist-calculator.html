@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en"></html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waist Percentile Calculator</title>
+    <title>Calculadora de Perímetro Abdominal</title>
+    <!-- Tailwind CSS - For development only. In production, install as PostCSS plugin -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Shared Calculator Library -->
+    <script src="./waist-percentile-shared.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -72,48 +75,6 @@
     </div>
 
     <script>
-        // --- INTERNAL DATABASE ---
-        const percentile_data = {
-            female: {
-                2:  { p10: 43.8, p25: 45.0, p50: 47.1, p75: 49.5, p90: 52.2 },
-                3:  { p10: 45.4, p25: 46.7, p50: 49.1, p75: 51.9, p90: 55.3 },
-                4:  { p10: 46.9, p25: 48.4, p50: 51.1, p75: 54.3, p90: 58.3 },
-                5:  { p10: 48.5, p25: 50.1, p50: 53.0, p75: 56.7, p90: 61.4 },
-                6:  { p10: 50.1, p25: 51.8, p50: 55.0, p75: 59.1, p90: 64.4 },
-                7:  { p10: 51.6, p25: 53.5, p50: 56.9, p75: 61.5, p90: 67.5 },
-                8:  { p10: 53.2, p25: 55.2, p50: 58.9, p75: 63.9, p90: 70.5 },
-                9:  { p10: 54.8, p25: 56.9, p50: 60.8, p75: 66.3, p90: 73.6 },
-                10: { p10: 56.3, p25: 58.6, p50: 62.8, p75: 68.7, p90: 76.6 },
-                11: { p10: 57.9, p25: 60.3, p50: 64.8, p75: 71.1, p90: 79.7 },
-                12: { p10: 59.5, p25: 62.0, p50: 66.7, p75: 73.5, p90: 82.7 },
-                13: { p10: 61.0, p25: 63.7, p50: 68.7, p75: 75.9, p90: 85.8 },
-                14: { p10: 62.6, p25: 65.4, p50: 70.6, p75: 78.3, p90: 88.8 },
-                15: { p10: 64.2, p25: 67.1, p50: 72.6, p75: 80.7, p90: 91.9 },
-                16: { p10: 65.7, p25: 68.8, p50: 74.6, p75: 83.1, p90: 94.9 },
-                17: { p10: 67.3, p25: 70.5, p50: 76.5, p75: 85.5, p90: 98.0 },
-                18: { p10: 69.9, p25: 72.2, p50: 78.5, p75: 87.9, p90: 101.0 }
-            },
-            male: {
-                2:  { p10: 43.2, p25: 45.0, p50: 47.1, p75: 48.8, p90: 50.8 },
-                3:  { p10: 44.9, p25: 46.9, p50: 49.1, p75: 51.3, p90: 54.2 },
-                4:  { p10: 46.6, p25: 48.7, p50: 51.1, p75: 53.9, p90: 57.6 },
-                5:  { p10: 48.4, p25: 50.6, p50: 53.2, p75: 56.4, p90: 61.0 },
-                6:  { p10: 50.1, p25: 52.4, p50: 55.2, p75: 59.0, p90: 64.4 },
-                7:  { p10: 51.8, p25: 54.3, p50: 57.2, p75: 61.5, p90: 67.8 },
-                8:  { p10: 53.5, p25: 56.1, p50: 59.3, p75: 64.1, p90: 71.2 },
-                9:  { p10: 55.3, p25: 58.0, p50: 61.3, p75: 66.6, p90: 74.6 },
-                10: { p10: 57.0, p25: 59.8, p50: 63.3, p75: 69.2, p90: 78.0 },
-                11: { p10: 58.7, p25: 61.7, p50: 65.4, p75: 71.7, p90: 81.4 },
-                12: { p10: 60.5, p25: 63.5, p50: 67.4, p75: 74.3, p90: 84.8 },
-                13: { p10: 62.2, p25: 65.4, p50: 69.5, p75: 76.8, p90: 88.2 },
-                14: { p10: 63.9, p25: 67.2, p50: 71.5, p75: 79.4, p90: 91.6 },
-                15: { p10: 65.6, p25: 69.1, p50: 73.5, p75: 81.9, p90: 95.0 },
-                16: { p10: 67.4, p25: 70.9, p50: 75.6, p75: 84.5, p90: 98.4 },
-                17: { p10: 69.1, p25: 72.8, p50: 77.6, p75: 87.0, p90: 101.8 },
-                18: { p10: 70.8, p25: 74.6, p50: 79.6, p75: 89.6, p90: 105.2 }
-            }
-        };
-
         // --- DOM REFERENCES ---
         const form = document.getElementById('percentileForm');
         const resultContainer = document.getElementById('result-container');
@@ -126,54 +87,51 @@
             event.preventDefault();
 
             const age = parseInt(document.getElementById('age').value);
-            const sexKey = document.querySelector('input[name="sex"]:checked')?.value;
+            const sexInput = document.querySelector('input[name="sex"]:checked')?.value;
             const measurement = parseFloat(document.getElementById('measurement').value);
 
-            if (isNaN(age) || !sexKey || isNaN(measurement)) {
-                resultContainer.classList.remove('hidden');
-                diagnosticTextEl.textContent = 'Datos incompletos';
-                diagnosticTextEl.classList.remove('text-red-500', 'text-orange-500', 'text-green-600');
-                resultValue.textContent = '⚠️';
-                resultValue.classList.remove('text-red-500', 'text-orange-500', 'text-green-600');
-                resultText.innerHTML = 'Por favor, complete todos los campos correctamente.';
+            // Basic validation
+            if (isNaN(age) || !sexInput || isNaN(measurement)) {
+                showResult('⚠️', 'Datos incompletos', 'Por favor, complete todos los campos correctamente.', 'text-gray-500');
                 return;
             }
 
-            const ageData = percentile_data[sexKey][age];
-            const p90_value = ageData.p90;
-            const p75_value = ageData.p75;
-            
-            let finalResult;
-            let diagnosticText;
-            let resultMessage;
-            let resultColorClass;
+            // Use shared library to calculate assessment
+            const assessment = window.WaistPercentileCalculator.calculateWaistAssessment(age, sexInput, measurement);
 
-            finalResult = (measurement > p90_value) ? 1 : 0;
-
-            if (measurement > p90_value) {
-                diagnosticText = "Obesidad Abdominal";
-                resultColorClass = 'text-red-500';
-                resultMessage = `La medición (${measurement} cm) está sobre el percentil 90 (${p90_value} cm).`;
-            } else if (measurement > p75_value) {
-                diagnosticText = "Riesgo de Obesidad Abdominal";
-                resultColorClass = 'text-orange-500';
-                resultMessage = `La medición (${measurement} cm) está entre el P75 (${p75_value} cm) y el P90 (${p90_value} cm).`;
-            } else {
-                diagnosticText = "Normal";
-                resultColorClass = 'text-green-600';
-                resultMessage = `La medición (${measurement} cm) está en o por debajo del percentil 75 (${p75_value} cm).`;
+            if (!assessment.isValid) {
+                showResult('❌', 'Error', assessment.error, 'text-red-500');
+                return;
             }
 
-            resultValue.textContent = finalResult;
-            diagnosticTextEl.textContent = diagnosticText;
-            resultText.innerHTML = resultMessage;
+            // Determine color and message
+            let resultColorClass, resultMessage;
 
-            const colorClasses = ['text-red-500', 'text-orange-500', 'text-green-600'];
+            if (assessment.diagnosis === "Obesidad Abdominal") {
+                resultColorClass = 'text-red-500';
+                resultMessage = `La medición (${measurement} cm) está sobre el percentil 90 (${assessment.percentiles.p90} cm).`;
+            } else if (assessment.diagnosis === "Riesgo de Obesidad Abdominal") {
+                resultColorClass = 'text-orange-500';
+                resultMessage = `La medición (${measurement} cm) está entre el P75 (${assessment.percentiles.p75} cm) y el P90 (${assessment.percentiles.p90} cm).`;
+            } else {
+                resultColorClass = 'text-green-600';
+                resultMessage = `La medición (${measurement} cm) está en o por debajo del percentil 75 (${assessment.percentiles.p75} cm).`;
+            }
+
+            showResult(assessment.result, assessment.diagnosis, resultMessage, resultColorClass);
+        });
+
+        function showResult(value, diagnosis, message, colorClass) {
+            resultValue.textContent = value;
+            diagnosticTextEl.textContent = diagnosis;
+            resultText.innerHTML = message;
+
+            const colorClasses = ['text-red-500', 'text-orange-500', 'text-green-600', 'text-gray-500'];
             resultValue.classList.remove(...colorClasses);
             diagnosticTextEl.classList.remove(...colorClasses);
             
-            resultValue.classList.add(resultColorClass);
-            diagnosticTextEl.classList.add(resultColorClass);
+            resultValue.classList.add(colorClass);
+            diagnosticTextEl.classList.add(colorClass);
             
             resultContainer.classList.remove('hidden');
             resultContainer.classList.add('result-pop');
@@ -181,7 +139,7 @@
             resultContainer.addEventListener('animationend', () => {
                 resultContainer.classList.remove('result-pop');
             }, { once: true });
-        });
+        }
     </script>
 </body>
 </html>
